@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Flush {
     public static final int SIZE = 5;
 
-
+//??
     public static boolean isFlush(ArrayList<Card> cardArrayList) {
         int pikes = 0;
         int clovers = 0;
