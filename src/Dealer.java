@@ -8,6 +8,7 @@ import utils.CardPriorityComparator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class Dealer {
 
@@ -55,28 +56,28 @@ public class Dealer {
 
 
     public void helper(Player player) {
-        determineCardCombination(player,getPlayerAndTableCards(player));
+        determineCardCombination(player, getPlayerAndTableCards(player));
     }
 
     public void determineCardCombination(Player player, ArrayList<Card> cardArrayList) {
-        if (Pair.isPair(cardArrayList)) {
-            player.setCardCombination(CardCombination.PAIR);
-        } else if (TwoPair.isTwoPair(cardArrayList)) {
-            player.setCardCombination(CardCombination.TWOPAIR);
-        } else if (RoyalFlush.isRoyalFlush(cardArrayList)) {
+        if (RoyalFlush.isRoyalFlush(cardArrayList)) {
             player.setCardCombination(CardCombination.ROYALFLUSH);
-        } else if (ThreeOfKind.isKindOfThree(cardArrayList)) {
-            player.setCardCombination(CardCombination.THREEOFKIND);
-        } else if (Flush.isFlush(cardArrayList)) {
-            player.setCardCombination(CardCombination.FLUSH);
         } else if (StraightFlush.isStraightFlush(cardArrayList)) {
             player.setCardCombination(CardCombination.STRAIGHTFLUSH);
-        } else if (FullHouse.isFullHouse(cardArrayList)) {
-            player.setCardCombination(CardCombination.FULLHOUSE);
-        } else if (Straight.isStraight(cardArrayList)) {
-            player.setCardCombination(CardCombination.STRAIGHT);
         } else if (FourOfKind.isFourOfKind(cardArrayList)) {
             player.setCardCombination(CardCombination.FOUROFKIND);
+        } else if (FullHouse.isFullHouse(cardArrayList)) {
+            player.setCardCombination(CardCombination.FULLHOUSE);
+        } else if (Flush.isFlush(cardArrayList)) {
+            player.setCardCombination(CardCombination.FLUSH);
+        } else if (Straight.isStraight(cardArrayList)) {
+            player.setCardCombination(CardCombination.STRAIGHT);
+        } else if (ThreeOfKind.isKindOfThree(cardArrayList)) {
+            player.setCardCombination(CardCombination.THREEOFKIND);
+        } else if (TwoPair.isTwoPair(cardArrayList)) {
+            player.setCardCombination(CardCombination.TWOPAIR);
+        } else if (Pair.isPair(cardArrayList)) {
+            player.setCardCombination(CardCombination.PAIR);
         } else {
             player.setCardCombination(CardCombination.HIGHCARD);
         }
@@ -87,9 +88,34 @@ public class Dealer {
         for (Player player : table.getPlayers()) {
             player.setCardCombinationPriority(HandRankings.cardPriorityCombination.get(player.getCardCombination()));
         }
-
         Collections.sort(table.getPlayers(), new CardCombinationPriorityComparator());
-        System.out.println("Winner: " + table.getPlayers().get(0).getName() + " " + table.getPlayers().get(0).getCardCombination().toString());
+        if (table.getPlayers().get(0).getCardCombinationPriority() == table.getPlayers().get(1).getCardCombinationPriority()) {
+            determineHighCardWinner();
+        } else {
+            System.out.println("Winner: " + table.getPlayers().get(0).getName() + " " + table.getPlayers().get(0).getCardCombination().toString());
+        }
+    }
+
+    public void determineHighCardWinner() {
+        ArrayList<Player> highCardPlayer = new ArrayList<>();
+        for (Player player : table.getPlayers()) {
+            if (player.getCardCombinationPriority() == table.getPlayers().get(0).getCardCombinationPriority()) {
+                highCardPlayer.add(player);
+            }
+        }
+        for (int i = 1; i < highCardPlayer.size(); i++) {
+            if (highCardPlayer.get(i - 1).getCard1().getCardPriority() == highCardPlayer.get(i).getCard1().getCardPriority()) {
+                if (highCardPlayer.get(i - 1).getCard2().getCardPriority() < highCardPlayer.get(i).getCard2().getCardPriority()) {
+                    highCardPlayer.remove(i - 1);
+                }
+            } else if (highCardPlayer.get(i - 1).getCard1().getCardPriority() < highCardPlayer.get(i).getCard1().getCardPriority()) {
+                highCardPlayer.remove(i - 1);
+            }
+        }
+
+
+        System.out.println("Winner: " + highCardPlayer.get(0).getName() + " " + highCardPlayer.get(0).getCardCombination().toString());
+
     }
 
     public void setCardForTable() {

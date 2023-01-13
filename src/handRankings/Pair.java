@@ -2,21 +2,18 @@ package handRankings;
 
 
 import cards.Card;
+import utils.CountCards;
 
 import java.util.ArrayList;
 
 public class Pair {
 
-
     public static boolean isPair(ArrayList<Card> cardArrayList) {
-        int pair=0;
-        for (int i = 0; i < cardArrayList.size(); i++) {
-            for (int j = i + 1; j < cardArrayList.size(); j++) {
-                if (cardArrayList.get(i).getCardPriority() == cardArrayList.get(j).getCardPriority()) {
-                 pair++;
-                }
+        for(Card card:cardArrayList){
+            if(CountCards.countCardsByPriority(cardArrayList,card.getCardPriority())==2){
+                return true;
             }
         }
-        return pair == 1;
+        return false;
     }
 }
